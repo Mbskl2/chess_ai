@@ -77,15 +77,17 @@ class Board:
         ]
         
     def put(self, piece: Piece, field: str):
-        assert(len(field), 2, f'Invalid field: {field}')
+        assert len(field) == 2, f'Invalid field: {field}'
         column = field[0]
-        assert('a' <= column <= 'h', f'Invalid field: {field}')
+        assert 'a' <= column <= 'h', f'Invalid field: {field}'
         row = field[1]
-        assert('1' <= row <= '8', f'Invalid field: {field}')
+        assert '1' <= row <= '8', f'Invalid field: {field}'
         column_index = ord(column) - ord('a')
         row_index = 8 - int(row)
         piece_on_field = self.board[row_index][column_index]
-        assert(piece_on_field is None, f'Field already taken by {piece_on_field.color} {piece_on_field.type}')
+        assert piece_on_field is None, f'Field already taken by {piece_on_field.color} {piece_on_field.type}'
+        
+        self.board[row_index][column_index] = piece
     
     def render(self) -> None:
         self.render_fields(self.canvas)
