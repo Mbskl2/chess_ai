@@ -1,6 +1,20 @@
 import tkinter as tk
 import uuid
 
+class Piece:
+    def __init__(self, color, type) -> None:
+        self.color = color
+        self.type = type
+        self.guid = uuid.uuid4()
+        
+    def __eq__(self, value: object) -> bool:
+        if not isinstance(value, Piece):
+            return False
+        return self.guid == value.guid
+    
+    def __hash__(self) -> int:
+        return self.guid.__hash__()
+
 class Board:
     field_color_black = '#b16e41'
     field_color_white = '#ffd599'
@@ -61,6 +75,17 @@ class Board:
             [wp1, wp2, wp3, wp4, wp5, wp6, wp7, wp8],
             [wr1, wk1, wb1, wq, wking, wb2, wk2, wr2],
         ]
+        
+    def put(self, piece: Piece, field: str):
+        assert(len(field), 2, f'Invalid field: {field}')
+        column = field[0]
+        assert('a' <= column <= 'h', f'Invalid field: {field}')
+        row = field[1]
+        assert('1' <= row <= '8', f'Invalid field: {field}')
+        column_index = ord(column) - ord('a')
+        row_index = 8 - int(row)
+        piece_on_field = self.board[row_index][column_index]
+        assert(piece_on_field is None, f'Field already taken by {piece_on_field.color} {piece_on_field.type}')
     
     def render(self) -> None:
         self.render_fields(self.canvas)
@@ -86,17 +111,4 @@ class Board:
             for j in range(8):
                 color = [Board.field_color_black, Board.field_color_white][(i+j) % 2]
                 canvas.create_rectangle(i*Board.field_size, j*Board.field_size, (i+1)*Board.field_size, (j+1)*Board.field_size, fill=color)
-                
-class Piece:
-    def __init__(self, color, type) -> None:
-        self.color = color
-        self.type = type
-        self.guid = uuid.uuid4()
-        
-    def __eq__(self, value: object) -> bool:
-        if not isinstance(value, Piece):
-            return False
-        return self.guid == value.guid
-    
-    def __hash__(self) -> int:
-        return self.guid.__hash__()
+            
